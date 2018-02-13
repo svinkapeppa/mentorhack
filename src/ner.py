@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import sys
 from natasha import NamesExtractor, DatesExtractor, MoneyExtractor, AddressExtractor, OrganisationExtractor 
 

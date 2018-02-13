@@ -4,6 +4,7 @@
 import csv
 import sys
 from datetime import datetime
+from ir import is_task
 
 BOARDS = {}
 writer = csv.writer(sys.stdout, quoting=csv.QUOTE_NONNUMERIC)
@@ -31,6 +32,8 @@ def format_body(text):
 
 for row in csv.reader(iter(sys.stdin.readline, '')):
     chat_id, form, question = row[0], row[1], row[2]
+    if not is_task(question):
+        continue
 
     list_id = chat_id2list_id(chat_id)
     summary = gen_summary(question)
