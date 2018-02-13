@@ -43,21 +43,17 @@ def extract_date(text):
         return datetime.now() + datetime.timedelta(days=3)                     
     elif text == 'один месяц':
         return datetime.now() + datetime.timedelta(month=1)                         
+    elif 1 == 1: #regex check
+        return ???
     elif text == 'день':
         return datetime.now() + datetime.timedelta(day=1)                         
     elif text == 'неделя': 
         return datetime.now() + datetime.timedelta(week=1)                         
     elif text == 'месяц':
         return datetime.now() + datetime.timedelta(month=1)                         
-    else:
+    else: #natasha
         pass
 
     facts = []
     for match in matches:
         return match.fact
-
-def gen_summary(text):
-    return 'STUB'
-
-def format_body(text)
-    return text
