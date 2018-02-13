@@ -9,6 +9,9 @@ name_extractor = NamesExtractor()
 money_extractor = MoneyExtractor()
 organization_extractor = OrganisationExtractor() 
 address_extractor = AddressExtractor()
+m = Mystem()
+
+m = Mystem()
 
 #for line in sys.stdin:
 #    matches = dates_extractor(line)
@@ -25,11 +28,12 @@ def extract_users(text):
     return res
 
 def extract_date(text):
-    matches = re.search('@\d+ (день|неделя|месяц|год)', text)
+    text = m.lemmatize(text)
+    matches = re.search('@\d+ день|неделя|месяц|год', text)
 
-    if text == 'завтра':
+    if 'завтра' in text:
         return datetime.now() + datetime.timedelta(days=1)
-    elif text == 'послезавтра':
+    elif 'послезавтра' in text:
         return datetime.now() + datetime.timedelta(days=2) 
     elif text == 'один неделя':
         return datetime.now() + datetime.timedelta(weeks=1) 
@@ -43,7 +47,7 @@ def extract_date(text):
         return datetime.now() + datetime.timedelta(days=3)                     
     elif text == 'один месяц':
         return datetime.now() + datetime.timedelta(month=1)                         
-    elif 1 == 1: #regex check
+    elif len(matches) > 0: #regex check
         return ???
     elif text == 'день':
         return datetime.now() + datetime.timedelta(day=1)                         
