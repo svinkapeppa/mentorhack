@@ -4,7 +4,7 @@
 
 ## как пользоваться нашим ботом
 
-[url](t.me/mentor_assist_bot)
+[bot url](http://t.me/mentor_assist_bot)
 
 - добавить в чат
 - следуя инструкциям бота подключить Trello
