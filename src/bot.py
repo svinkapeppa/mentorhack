@@ -53,13 +53,14 @@ def write_to_telegram(arr):
 
 def main():
     for row in csv.reader(iter(sys.stdin.readline, '')):
-        chat_id, from_, question = row[0], row[1], row[2]
+        chat_id, from_, from_mention, question = row[0], row[1], row[2], row[3]
+        from_mention = '@' + from_mention
 
         list_id = chat_id2list_id(chat_id)
         token = chat_id2token(chat_id)
         
-        if chat_id == from_ and from_ not in TELEGRAM2TRELLO and is_email(question):
-            TELEGRAM2TRELLO[from_] = question
+        if chat_id == from_ and from_mention not in TELEGRAM2TRELLO and is_email(question):
+            TELEGRAM2TRELLO[from_mention] = question
 
         if (list_id is None or token is None) and is_trello_token(question):
             CHAT2TOKENS[chat_id] = question.split(' ')[0]
@@ -80,7 +81,7 @@ def main():
         unknown_telegram_users = []
         for user in extract_users(question):
             if user in TELEGRAM2TRELLO:
-                trello_users.append(TELEGRAM2TRELLO[user])
+                assignees.append(TELEGRAM2TRELLO[user])
             else:
                 unknown_telegram_users.append(user)
 
