@@ -81,14 +81,14 @@ def process_message(chat_id, from_, from_mention, question):
         CHAT2TOKENS[chat_id] = question.split(' ')[0]
         CHAT2LISTS[chat_id] = question.split(' ')[1]
         write_to_telegram([chat_id, trello_list_added_text, '', '','',''])
-        continue
+        return
 
     if list_id is None or token is None:
         write_to_telegram([chat_id, trello_list_needed_text, '', '','',''])
-        continue
+        return
         
     if not is_task(question) and KAZEMIR_MENTION not in question:
-        continue
+        return
 
     summary = gen_summary(question)
     text = format_body(question)
