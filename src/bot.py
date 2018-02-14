@@ -9,7 +9,7 @@ from datetime import datetime
 from ir import is_task, is_trello_token
 from summary import summorize
 from NER.ner import extract_users, extract_date, is_email
-from texts import trello_list_needed_text, trello_list_added_text, user_email_needed
+from texts import trello_list_needed_text, trello_list_added_text, user_email_needed, snx
 
 CHAT2LISTS = {}
 CHAT2TOKENS = {}
@@ -71,6 +71,7 @@ def main():
         
         if chat_id == from_ and from_mention not in TELEGRAM2TRELLO and is_email(question):
             TELEGRAM2TRELLO[from_mention] = question
+            write_to_telegram([chat_id, snx, '', '','',''])
 
         if (list_id is None or token is None) and is_trello_token(question):
             CHAT2TOKENS[chat_id] = question.split(' ')[0]
