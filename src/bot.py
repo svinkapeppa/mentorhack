@@ -6,7 +6,7 @@ sys.path.insert(0, "summary/opennmt")
 from datetime import datetime
 from ir import is_task, is_trello_token
 from summary import summorize
-from ner import extract_users, extract_date
+from NER.ner import extract_users, extract_date
 from texts import trello_list_needed_text, trello_list_added_text
 
 CHAT2LISTS = {}
