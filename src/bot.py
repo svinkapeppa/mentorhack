@@ -77,7 +77,7 @@ def process_message(chat_id, from_, from_mention, question):
     list_id = chat_id2list_id(chat_id)
     token = chat_id2token(chat_id)
     
-    if chat_id == from_ and from_mention not in TELEGRAM2TRELLO and is_email(question):
+    if from_mention not in TELEGRAM2TRELLO and is_email(questioan.replace(KAZEMIR_MENTION + ' ', '')):
         TELEGRAM2TRELLO[from_mention] = question
         write_to_telegram([chat_id, snx, '', '','',''])
 
