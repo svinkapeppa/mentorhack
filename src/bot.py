@@ -2,6 +2,8 @@
 
 import csv
 import sys
+import os
+import json
 sys.path.insert(0, "summary/opennmt")
 from datetime import datetime
 from ir import is_task, is_trello_token
@@ -18,8 +20,16 @@ def write_task(token, list_id, summary, text, assignees, due_date):
         due_date = ""
     else:
         due_date = due_date.date().isoformat()
-    #TODO subprocess
-    print([token, list_id, summary, text, ','.join(assignees), due_date], file=sys.stderr)
+
+    payload = [token, list_id, summary, text, ','.join(assignees), due_date]
+
+    #print(payload, file=sys.stderr)
+
+    to_exec = "echo '" + json.dumps(payload) + "' | " + os.getcwd() + "/totrello/index.js"
+    response = os.popen(to_exec).read()
+    id = json.loads(response)['id']
+
+    # TODO: use id
 
 def chat_id2list_id(chat_id):
     if chat_id in CHAT2LISTS:
