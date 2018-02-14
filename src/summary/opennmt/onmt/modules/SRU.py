@@ -36,12 +36,12 @@ def check_sru_requirement(abort=False):
     # Check 1.
     try:
         if platform.system() == 'Windows':
-            subprocess.check_output('pip freeze | findstr cupy', shell=True)
-            subprocess.check_output('pip freeze | findstr pynvrtc',
+            subprocess.check_output('pip3 freeze | findstr cupy', shell=True)
+            subprocess.check_output('pip3 freeze | findstr pynvrtc',
                                     shell=True)
         else:  # Unix-like systems
-            subprocess.check_output('pip freeze | grep -w cupy', shell=True)
-            subprocess.check_output('pip freeze | grep -w pynvrtc',
+            subprocess.check_output('pip3 freeze | grep -w cupy', shell=True)
+            subprocess.check_output('pip3 freeze | grep -w pynvrtc',
                                     shell=True)
     except subprocess.CalledProcessError:
         if not abort:
