@@ -1,5 +1,5 @@
 trello_list_needed_text = '''необходимо вас зарегистрировать! Для этого:
-        - перейдите на https://trello.com/1/authorize?expiration=never&name=SinglePurposeToken&key=b0e80e8c1862ec65407d67bfc4a87fd4&response_type=token
+        - перейдите на https://trello.com/1/authorize?expiration=never&name=MentorBot&key=09ee14411f546915a65d690b1a8d36b0&response_type=token&scope=read,write,account
         - нажмите "ALLOW"
         - запомните токен
         - откройте или создайте доску в https://trello.com и в URL браузера замените имя доски на report.json
