@@ -34,6 +34,9 @@ def write_task(token, list_id, summary, text, assignees, due_date, chat_id):
 
     #print(response, file=sys.stderr)
     url = response['newCard']['shortUrl']
+    for mc in response['memberCardAmounts']:
+        pass
+
     write_to_telegram([chat_id, url, '', '', '', ''])
 
     if 'error' in response:
@@ -94,10 +97,10 @@ def process_message(chat_id, from_, from_mention, question):
     unknown_telegram_users = []
     for user in extract_users(question):
         if user in TELEGRAM2TRELLO:
-            if user != KAZEMIR_MENTION:
-                assignees.append(TELEGRAM2TRELLO[user])
+            assignees.append(TELEGRAM2TRELLO[user])
         else:
-            unknown_telegram_users.append(user)
+            if user != KAZEMIR_MENTION:
+                unknown_telegram_users.append(user)
 
     if len(unknown_telegram_users) > 0:
         write_to_telegram([chat_id, user_email_needed.format(','.join(unknown_telegram_users)), '', '','',''])
