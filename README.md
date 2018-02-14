@@ -4,7 +4,7 @@
 
 ## как пользоваться нашим ботом
 
-telegram bot name: https://core.telegram.org/bots/api
+telegram bot name: t.me/mentor_assist_bot
 
 - добавить в чат
 - следуя инструкциям бота подключить Trello
