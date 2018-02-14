@@ -7,7 +7,7 @@ const key = '09ee14411f546915a65d690b1a8d36b0';
 
 let out = { memberCardAmounts: [] };
 
-stdin.on('data', async input => {
+stdin.on('data', input => {
   input = String(input).replace('\n', '');
   // console.log({input});
 
@@ -46,7 +46,7 @@ stdin.on('data', async input => {
       .then(response => {
         // console.log(888, response.data);
 
-        return response.data[0].id
+        return response.data[0].id;
       })
       .catch(err => {
         // console.log({ err });
@@ -54,37 +54,39 @@ stdin.on('data', async input => {
       });
 
   const userIdRequests = idMembers.split(',').map(getMemberId);
-  const ids = await Promise.all(userIdRequests);
 
-  const options = {
-    method: 'POST',
-    url: 'https://api.trello.com/1/cards',
-    qs: {
-      idList,
-      name,
-      desc,
-      idMembers: ids,
-      due,
-      keepFromSource: 'all',
-      key,
-      token,
-    },
-  };
+  Promise.all(userIdRequests).then(ids => {
+    const options = {
+      method: 'POST',
+      url: 'https://api.trello.com/1/cards',
+      qs: {
+        idList,
+        name,
+        desc,
+        idMembers: ids,
+        due,
+        keepFromSource: 'all',
+        key,
+        token,
+      },
+    };
 
-  request(options, async (error, response, body) => {
-    if (error) {
-      out.error = error.message;
-      return;
-    }
-    // console.log({ error });
-    // console.log({body});
+    request(options, (error, response, body) => {
+      if (error) {
+        out.error = error.message;
+        return;
+      }
+      // console.log({ error });
+      // console.log({body});
 
-    out.newCard = JSON.parse(body);
+      out.newCard = JSON.parse(body);
 
-    const userCardAmountRequests = ids.map(getMemberCardsAmount);
+      const userCardAmountRequests = ids.map(getMemberCardsAmount);
 
-    Promise.all(userCardAmountRequests)
-      .then(() => console.log(JSON.stringify(out)))
+      Promise.all(userCardAmountRequests).then(() =>
+        console.log(JSON.stringify(out))
+      );
       // .catch(e => console.log({ e }));
+    });
   });
 });
