@@ -53,7 +53,10 @@ stdin.on('data', input => {
         out.error = err.message;
       });
 
-  const userIdRequests = idMembers.split(',').map(getMemberId);
+  const userIdRequests = idMembers
+    .split(',')
+    .filter(e => e !== '')
+    .map(getMemberId);
 
   Promise.all(userIdRequests).then(ids => {
     const options = {
