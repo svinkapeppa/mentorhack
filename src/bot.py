@@ -43,7 +43,7 @@ def format_body(text):
     return text
 
 def main():
-    writer = csv.writer(sys.stdout, quoting=csv.QUOTE_NONNUMERIC)
+    telegram_gate = csv.writer(sys.stdout, quoting=csv.QUOTE_NONNUMERIC)
     for row in csv.reader(iter(sys.stdin.readline, '')):
         chat_id, form, question = row[0], row[1], row[2]
 
@@ -53,11 +53,11 @@ def main():
         if (list_id is None or token is None) and is_trello_token(question):
             CHAT2TOKENS[chat_id] = question.split(' ')[0]
             CHAT2LISTS[chat_id] = question.split(' ')[1]
-            writer.writerow([chat_id, '', trello_list_added_text, '', '','',''])
+            telegram_gate.writerow([chat_id, trello_list_added_text, '', '','',''])
             continue
 
         if list_id is None or token is None:
-            writer.writerow([chat_id, '', trello_list_needed_text, '', '','',''])
+            telegram_gate.writerow([chat_id, trello_list_needed_text.strip(), '', '','',''])
             continue
             
         if not is_task(question):
