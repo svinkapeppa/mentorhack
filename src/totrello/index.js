@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const request = require('request');
+const axios = require('axios');
 const stdin = process.openStdin();
 
 const key = '09ee14411f546915a65d690b1a8d36b0';
@@ -12,24 +13,26 @@ stdin.on('data', input => {
 
   const [token, idList, name, desc, idMembers, due] = JSON.parse(input);
 
-  const getMemberCardsAmount = memberId => {
-    const options = {
-      method: 'GET',
-      url: `https://api.trello.com/1/members/${memberId}/cards`,
-      qs: {
-        key,
-        token,
-      },
-    };
+  const getMemberCardsAmount = memberId =>
+    axios
+      .get(`https://api.trello.com/1/members/${memberId}/cards`, {
+        params: {
+          key,
+          token,
+        },
+      })
+      .then(response => {
+        // console.log(3434, Array.isArray(response.data));
 
-    request(options, (error, response, body) => {
-      if (error) throw new Error(error);
-      // console.log('cards for user: ', JSON.parse(body).length);
-      out.memberCardAmounts.push({ memberId, cardsAmount: JSON.parse(body).length });
-
-      console.log(out);
-    });
-  };
+        out.memberCardAmounts.push({
+          memberId,
+          cardsAmount: response.data.length,
+        });
+      })
+      .catch(err => {
+        // console.log({ err });
+        out.error = err.message;
+      });
 
   const options = {
     method: 'POST',
@@ -47,8 +50,18 @@ stdin.on('data', input => {
   };
 
   request(options, (error, response, body) => {
-    if (error) throw new Error(error);
-    out.newCard = body;
-    idMembers.split(',').forEach(getMemberCardsAmount);
+    if (error) {
+      out.error = error.message;
+      // console.log({ error });
+      return;
+    }
+
+    out.newCard = JSON.parse(body);
+
+    const userRequests = idMembers.split(',').map(getMemberCardsAmount);
+
+    Promise.all(userRequests)
+      .then(() => console.log(JSON.stringify(out)))
+      // .catch(e => console.log({ e }));
   });
 });

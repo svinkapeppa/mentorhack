@@ -8,4 +8,4 @@ to_exec = "echo '" +  json.dumps(arr) + "' | " + os.getcwd() + "/totrello/index.
 d = os.popen(to_exec).read()
 
 print('py')
-print(json.loads(d)['id'])
+print(json.loads(d))
