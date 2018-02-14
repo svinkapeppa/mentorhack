@@ -7,7 +7,7 @@ const key = '09ee14411f546915a65d690b1a8d36b0';
 
 let out = { memberCardAmounts: [] };
 
-stdin.on('data', input => {
+stdin.on('data', async input => {
   input = String(input).replace('\n', '');
   // console.log({input});
 
@@ -34,6 +34,28 @@ stdin.on('data', input => {
         out.error = err.message;
       });
 
+  const getMemberId = email =>
+    axios
+      .get(`https://api.trello.com/1/search/members/`, {
+        params: {
+          query: email,
+          key,
+          token,
+        },
+      })
+      .then(response => {
+        // console.log(888, response.data);
+
+        return response.data[0].id
+      })
+      .catch(err => {
+        // console.log({ err });
+        out.error = err.message;
+      });
+
+  const userIdRequests = idMembers.split(',').map(getMemberId);
+  const ids = await Promise.all(userIdRequests);
+
   const options = {
     method: 'POST',
     url: 'https://api.trello.com/1/cards',
@@ -41,7 +63,7 @@ stdin.on('data', input => {
       idList,
       name,
       desc,
-      idMembers,
+      idMembers: ids,
       due,
       keepFromSource: 'all',
       key,
@@ -49,18 +71,19 @@ stdin.on('data', input => {
     },
   };
 
-  request(options, (error, response, body) => {
+  request(options, async (error, response, body) => {
     if (error) {
       out.error = error.message;
-      // console.log({ error });
       return;
     }
+    // console.log({ error });
+    // console.log({body});
 
     out.newCard = JSON.parse(body);
 
-    const userRequests = idMembers.split(',').map(getMemberCardsAmount);
+    const userCardAmountRequests = ids.map(getMemberCardsAmount);
 
-    Promise.all(userRequests)
+    Promise.all(userCardAmountRequests)
       .then(() => console.log(JSON.stringify(out)))
       // .catch(e => console.log({ e }));
   });
