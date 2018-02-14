@@ -5,7 +5,7 @@ import re
 
 MODELS = Path('../models/ir').expanduser()
 
-with (MODELS / 'classifier.pickle').open('rb') as f:
+with (MODELS / 'classifier3.pickle').open('rb') as f:
     classifier = pickle.load(f)
 
 def is_task(s):
