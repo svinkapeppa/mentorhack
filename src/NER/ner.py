@@ -27,11 +27,7 @@ def lemmatize(s):
 
 
 def extract_users(text):
-    matches = re.search('@\w+', text)
-    res = []
-    for m in matches:
-        res.append(m)
-    return res
+    return re.findall('(@\w+)', text)
 
 
 count_names = 'один|два|три|четыре|пять|шесть|семь|восемь|девять|десять'.split('|')
@@ -85,9 +81,12 @@ if __name__ == '__main__':
     tests = '''сделай к 4 февраля
 даю тебе 4 дня на реализацию
 код должен работать через 2 месяца начиная с сейчас    
-срок тебе неделя'''
+срок тебе неделя
+тут нет даты'''
     print('now', datetime.now())
     for line in tests.splitlines():
         print(line)
         print(extract_date(line))
         print()
+
+    print(extract_users('сообщи когда будут проблемы @tsundokum'))
