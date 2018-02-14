@@ -16,7 +16,7 @@ CHAT2LISTS = {}
 CHAT2TOKENS = {}
 TELEGRAM2TRELLO = {}
 
-def write_task(token, list_id, summary, text, assignees, due_date):
+def write_task(token, list_id, summary, text, assignees, due_date, chat_id):
     if due_date is None:
         due_date = ""
     else:
@@ -27,10 +27,16 @@ def write_task(token, list_id, summary, text, assignees, due_date):
     #print(payload, file=sys.stderr)
 
     to_exec = "echo '" + json.dumps(payload) + "' | " + os.getcwd() + "/totrello/index.js"
-    response = os.popen(to_exec).read()
-    id = json.loads(response)['id']
+    response = json.loads(os.popen(to_exec).read())
 
     # TODO: use id
+    id = response['id']
+
+    error = response['error']
+
+    if error:
+      error_text = 'Trello response error: ' + error
+      write_to_telegram([chat_id, error_text, '', '', '', ''])
 
 def chat_id2list_id(chat_id):
     if chat_id in CHAT2LISTS:
@@ -103,7 +109,7 @@ def main():
             
         due_date = extract_date(question)
 
-        write_task(token, list_id, summary, text, assignees, due_date)
+        write_task(token, list_id, summary, text, assignees, due_date, chat_id)
 
 if __name__ == "__main__":
     main()
