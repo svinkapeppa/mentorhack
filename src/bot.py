@@ -34,10 +34,11 @@ def write_task(token, list_id, summary, text, assignees, due_date, chat_id):
 
     #print(response, file=sys.stderr)
     url = response['newCard']['shortUrl']
+    text = 'Задача: ' + url + '\nСтатистика:'
     for mc in response['memberCardAmounts']:
-        pass
+        text = text + '\n' + mc['email'] + ': ' + mc['cardsAmmount']
 
-    write_to_telegram([chat_id, url, '', '', '', ''])
+    write_to_telegram([chat_id, text, '', '', '', ''])
 
     if 'error' in response:
       error_text = 'Trello response error: ' + response['error']
