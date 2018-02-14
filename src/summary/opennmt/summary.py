@@ -16,7 +16,7 @@ import onmt.ModelConstructor
 import onmt.modules
 import sys
 
-opt = Namespace(alpha=0.0, attn_debug=False, batch_size=1, beam_size=10, beta=-0.0, data_type='text', dump_beam='', dynamic_dict=False, gpu=-1 , max_length=100, max_sent_length=None, min_length=0, model='../../../models/summorization/tmp__acc_55.92_ppl_5.70_e50.pt', n_best=1, output='pred.txt', replace_unk=True, report_bleu=False, report_rouge=False, sample_rate=16000, share_vocab=False, src='../../../data/src-test.txt', src_dir='', tgt=None, verbose=False, window='hamming', window_size=0.02, window_stride=0.01)
+opt = Namespace(alpha=0.0, attn_debug=False, batch_size=1, beam_size=10, beta=-0.0, data_type='text', dump_beam='', dynamic_dict=False, gpu=-1 , max_length=100, max_sent_length=None, min_length=0, model=os.path.dirname(os.path.abspath(__file__)) + '/../../../models/summorization/tmp__acc_55.92_ppl_5.70_e50.pt', n_best=1, output='pred.txt', replace_unk=True, report_bleu=False, report_rouge=False, sample_rate=16000, share_vocab=False, src=os.path.dirname(os.path.abspath(__file__)) + '/../../../data/src-test.txt', src_dir='', tgt=None, verbose=False, window='hamming', window_size=0.02, window_stride=0.01)
 
 opt.cuda = opt.gpu > -1
 if opt.cuda:
@@ -41,10 +41,10 @@ translator = onmt.translate.Translator(model, fields,
                                        min_length=opt.min_length)
 
 def summorize(req):
-    f = open('data.tmp', 'w')
+    f = open('/tmp/mentorhack_data.tmp', 'w')
     f.write(req)
     f.close()
-    data = onmt.io.build_dataset(fields, opt.data_type, 'data.tmp', opt.tgt, src_dir=opt.src_dir, sample_rate=opt.sample_rate, window_size=opt.window_size, window_stride=opt.window_stride, window=opt.window, use_filter_pred=False) 
+    data = onmt.io.build_dataset(fields, opt.data_type, '/tmp/mentorhack_data.tmp', opt.tgt, src_dir=opt.src_dir, sample_rate=opt.sample_rate, window_size=opt.window_size, window_stride=opt.window_stride, window=opt.window, use_filter_pred=False) 
     data_iter = onmt.io.OrderedIterator(dataset=data, device=opt.gpu, batch_size=opt.batch_size, train=False, sort=False, sort_within_batch=True, shuffle=False) 
     builder = onmt.translate.TranslationBuilder(data, translator.fields, opt.n_best, opt.replace_unk, opt.tgt)
     for batch in data_iter:
