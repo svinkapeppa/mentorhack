@@ -64,7 +64,7 @@ def main():
         if (list_id is None or token is None) and is_trello_token(question):
             CHAT2TOKENS[chat_id] = question.split(' ')[0]
             CHAT2LISTS[chat_id] = question.split(' ')[1]
-            write_to_telegram.writerow([chat_id, trello_list_added_text, '', '','',''])
+            write_to_telegram([chat_id, trello_list_added_text, '', '','',''])
             continue
 
         if list_id is None or token is None:
