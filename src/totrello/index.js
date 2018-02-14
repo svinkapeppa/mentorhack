@@ -13,27 +13,6 @@ stdin.on('data', input => {
 
   const [token, idList, name, desc, idMembers, due] = JSON.parse(input);
 
-  const getMemberCardsAmount = memberId =>
-    axios
-      .get(`https://api.trello.com/1/members/${memberId}/cards`, {
-        params: {
-          key,
-          token,
-        },
-      })
-      .then(response => {
-        // console.log(3434, Array.isArray(response.data));
-
-        out.memberCardAmounts.push({
-          memberId,
-          cardsAmount: response.data.length,
-        });
-      })
-      .catch(err => {
-        // console.log({ err });
-        out.error = err.message;
-      });
-
   const getMemberId = email =>
     axios
       .get(`https://api.trello.com/1/search/members/`, {
@@ -46,7 +25,7 @@ stdin.on('data', input => {
       .then(response => {
         // console.log(888, response.data);
 
-        return response.data[0].id;
+        return { email, id: response.data[0].id };
       })
       .catch(err => {
         // console.log({ err });
@@ -58,7 +37,29 @@ stdin.on('data', input => {
     .filter(e => e !== '')
     .map(getMemberId);
 
-  Promise.all(userIdRequests).then(ids => {
+  Promise.all(userIdRequests).then(members => {
+    const getMemberCardsAmount = ({ id, email }) =>
+      axios
+        .get(`https://api.trello.com/1/members/${id}/cards`, {
+          params: {
+            key,
+            token,
+          },
+        })
+        .then(response => {
+          // console.log(3434, Array.isArray(response.data));
+
+          out.memberCardAmounts.push({
+            id,
+            email,
+            cardsAmount: response.data.length,
+          });
+        })
+        .catch(err => {
+          // console.log({ err });
+          out.error = err.message;
+        });
+
     const options = {
       method: 'POST',
       url: 'https://api.trello.com/1/cards',
@@ -66,7 +67,7 @@ stdin.on('data', input => {
         idList,
         name,
         desc,
-        idMembers: ids,
+        idMembers: members.map(m => m.id),
         due,
         keepFromSource: 'all',
         key,
@@ -84,7 +85,7 @@ stdin.on('data', input => {
 
       out.newCard = JSON.parse(body);
 
-      const userCardAmountRequests = ids.map(getMemberCardsAmount);
+      const userCardAmountRequests = members.map(getMemberCardsAmount);
 
       Promise.all(userCardAmountRequests).then(() =>
         console.log(JSON.stringify(out))
