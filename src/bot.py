@@ -36,10 +36,8 @@ def write_task(token, list_id, summary, text, assignees, due_date, chat_id):
     url = response['newCard']['shortUrl']
     write_to_telegram([chat_id, url, '', '', '', ''])
 
-    error = response['error']
-
-    if error:
-      error_text = 'Trello response error: ' + error
+    if 'error' in response:
+      error_text = 'Trello response error: ' + response['error']
       write_to_telegram([chat_id, error_text, '', '', '', ''])
 
 def chat_id2list_id(chat_id):
