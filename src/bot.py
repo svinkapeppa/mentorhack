@@ -11,6 +11,7 @@ from summary import summorize
 from NER.ner import extract_users, extract_date, is_email
 from texts import trello_list_needed_text, trello_list_added_text, user_email_needed, snx
 
+KAZEMIR_MENTION = "@mentor_assist_bot"
 CHAT2LISTS = {}
 CHAT2TOKENS = {}
 TELEGRAM2TRELLO = {}
@@ -83,7 +84,7 @@ def main():
             write_to_telegram([chat_id, trello_list_needed_text, '', '','',''])
             continue
             
-        if not is_task(question):
+        if not is_task(question) and KAZEMIR_MENTION not in question:
             continue
 
         summary = gen_summary(question)
@@ -92,14 +93,14 @@ def main():
         unknown_telegram_users = []
         for user in extract_users(question):
             if user in TELEGRAM2TRELLO:
-                assignees.append(TELEGRAM2TRELLO[user])
+                if user != KAZEMIR_MENTION:
+                    assignees.append(TELEGRAM2TRELLO[user])
             else:
                 unknown_telegram_users.append(user)
 
         if len(unknown_telegram_users) > 0:
             write_to_telegram([chat_id, user_email_needed.format(','.join(unknown_telegram_users)), '', '','',''])
             
-
         due_date = extract_date(question)
 
         write_task(token, list_id, summary, text, assignees, due_date)
