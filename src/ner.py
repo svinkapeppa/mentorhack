@@ -11,8 +11,6 @@ organization_extractor = OrganisationExtractor()
 address_extractor = AddressExtractor()
 m = Mystem()
 
-m = Mystem()
-
 #for line in sys.stdin:
 #    matches = dates_extractor(line)
 #    facts = []

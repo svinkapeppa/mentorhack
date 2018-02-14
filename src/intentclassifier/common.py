@@ -1,12 +1,5 @@
-import re
-import json
-import os
-import csv
-import sys
-
 from nltk.tokenize import wordpunct_tokenize
 
-import pickle
 from pathlib import Path
 
 from pymystem3 import Mystem
@@ -24,8 +17,6 @@ def mystem_analyze(str):
         m = Mystem()
         return mystem_analyze(str)
 
-DATASETS = Path('~/data/taskdialog').expanduser()
-MODELS = Path('~/data/taskdialog/models').expanduser()
 
 def to_imperative(word):
     try:
@@ -91,7 +82,12 @@ def get_imperative_variants(text):
     except ValueError as ex:
         pass
     return text,
-        
+
+
+DATASETS = Path('~/data/taskdialog').expanduser()
+MODELS = Path('~/data/taskdialog/models').expanduser()
+
+
 assert get_imperative_variants('нужно сделать хорошо')[1] == 'сделайте хорошо'
 assert get_imperative_variants('повертеть попой')[2] == 'поверти попой'
 assert len(get_imperative_variants('хорошо сделать')) == 1

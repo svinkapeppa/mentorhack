@@ -1,48 +1,52 @@
 const fs = require('fs');
 const jsdom = require('jsdom');
-const csvStringify = require('csv-stringify');
+const csvStringify = require('csv-stringify/lib/sync');
 const { JSDOM } = jsdom;
 
 const n = process.argv[2];
 if (!n) throw new Error('pass n');
 
-const pagesPath = './pages_' + n;
+const pagesPath = './pages';
 let i = 0;
 
 console.log({n});
 
-// const stringify = data => new Promise((resolve, reject) => {
-//   return csvStringify(data, (err, csv) => {
-//     if (err) return console.log(`Error: ${err}`);
-//     return resolve(csv);
-//   });
-// });
-
 let pages = fs.readdirSync(pagesPath).filter(el => el !== '.' && el !== '..');
 
-const tasks = pages.map(page => {
+console.log(pages.length, pages[0], pages[pages.length - 1]);
+
+const batch = 260000;
+// const batch = 1000;
+
+const padding = batch * n - batch;
+
+pages = pages.slice(padding, padding + batch);
+
+console.log(pages.length, pages[0], pages[pages.length - 1]);
+
+pages.forEach(page => {
   const body = fs.readFileSync(`${pagesPath}/${page}`);
-  // const body = fs.readFileSync('./pages/1056093.html');
   const dom = new JSDOM(body);
   const document = dom.window.document;
 
-  const taskTitle = document.querySelector(
+  let taskTitle = document.querySelector(
     '.b-page__title.b-page__title_ellipsis'
-  ).textContent.trim();
+  );
 
-  const taskBody = document.querySelector(
+  if (taskTitle === null) return;
+  taskTitle = taskTitle.textContent.trim();
+
+  let taskBody = document.querySelector(
     '.b-layout__txt.b-layout__txt_padbot_20'
-  ).textContent.trim();
+  );
+
+  if (taskBody === null) return;
+  taskBody = taskBody.textContent.trim();
+
+  // console.log({taskTitle, taskBody });
+  const csv = csvStringify([[ taskTitle, taskBody ]]);
+  // console.log({csv});
+  fs.appendFileSync(`./out${n}.csv`, csv);
 
   console.log(++i);
-
-  return taskTitle && taskBody ? [ taskTitle, taskBody ] : null;
-});
-
-const completedTasks = tasks.filter(t => t !== null);
-
-csvStringify(completedTasks, (err, csv) => {
-  if (err) return console.error(`Error: ${err}`);
-  // console.log({csv, tasks});
-  fs.writeFileSync(`./out${n}.csv`, csv);
 });
