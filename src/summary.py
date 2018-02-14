@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from __future__ import division, unicode_literals
 import os
@@ -9,11 +9,11 @@ import torch
 
 from itertools import count
 
-import onmt.io
-import onmt.translate
-import onmt
-import onmt.ModelConstructor
-import onmt.modules
+import summary.opennmt.onmt.io
+import summary.opennmt.onmt.translate
+import summary.opennmt.onmt
+import summary.opennmt.onmt.ModelConstructor
+import summary.opennmt.onmt.modules
 import opts
 
 parser = argparse.ArgumentParser(
@@ -23,30 +23,6 @@ opts.add_md_help_argument(parser)
 opts.translate_opts(parser)
 
 opt = parser.parse_args()
-
-
-def _report_score(name, score_total, words_total):
-    print("%s AVG SCORE: %.4f, %s PPL: %.4f" % (
-        name, score_total / words_total,
-        name, math.exp(-score_total / words_total)))
-
-
-def _report_bleu():
-    import subprocess
-    print()
-    res = subprocess.check_output(
-        "perl tools/multi-bleu.perl %s < %s" % (opt.tgt, opt.output),
-        shell=True).decode("utf-8")
-    print(">> " + res.strip())
-
-
-def _report_rouge():
-    import subprocess
-    res = subprocess.check_output(
-        "python tools/test_rouge.py -r %s -c %s" % (opt.tgt, opt.output),
-        shell=True).decode("utf-8")
-    print(res.strip())
-
 
 def main():
     dummy_parser = argparse.ArgumentParser(description='train.py')
@@ -62,30 +38,36 @@ def main():
         onmt.ModelConstructor.load_test_model(opt, dummy_opt.__dict__)
 
     # File to write sentences to.
-    out_file = codecs.open(opt.output, 'w', 'utf-8')
+    #out_file = codecs.open(opt.output, 'w', 'utf-8')
 
     # Test data
-    data = onmt.io.build_dataset(fields, opt.data_type,
-                                 opt.src, opt.tgt,
+    data = onmt.io.build_dataset(fields, 'text',
+                                 opt.src, None,
                                  src_dir=opt.src_dir,
                                  sample_rate=opt.sample_rate,
                                  window_size=opt.window_size,
                                  window_stride=opt.window_stride,
                                  window=opt.window,
                                  use_filter_pred=False)
+#data = TextDataset(fields, src_examples_iter, None,
+#        num_src_feats, num_tgt_feats,
+#        src_seq_length=0,
+#        tgt_seq_length=0,
+#        dynamic_dict=True,
+#        use_filter_pred=False)
 
     # Sort batch by decreasing lengths of sentence required by pytorch.
     # sort=False means "Use dataset's sortkey instead of iterator's".
     data_iter = onmt.io.OrderedIterator(
         dataset=data, device=opt.gpu,
-        batch_size=opt.batch_size, train=False, sort=False,
+        batch_size=1, train=False, sort=False,
         sort_within_batch=True, shuffle=False)
 
     # Translator
     scorer = onmt.translate.GNMTGlobalScorer(opt.alpha, opt.beta)
     translator = onmt.translate.Translator(model, fields,
                                            beam_size=opt.beam_size,
-                                           n_best=opt.n_best,
+                                           n_best=1,
                                            global_scorer=scorer,
                                            max_length=opt.max_length,
                                            copy_attn=model_opt.copy_attn,
@@ -94,48 +76,14 @@ def main():
                                            min_length=opt.min_length)
     builder = onmt.translate.TranslationBuilder(
         data, translator.fields,
-        opt.n_best, opt.replace_unk, opt.tgt)
-
-    # Statistics
-    counter = count(1)
-    pred_score_total, pred_words_total = 0, 0
-    gold_score_total, gold_words_total = 0, 0
+        1, opt.replace_unk, opt.tgt)
 
     for batch in data_iter:
         batch_data = translator.translate_batch(batch, data)
         translations = builder.from_batch(batch_data)
 
         for trans in translations:
-            pred_score_total += trans.pred_scores[0]
-            pred_words_total += len(trans.pred_sents[0])
-            if opt.tgt:
-                gold_score_total += trans.gold_score
-                gold_words_total += len(trans.gold_sent)
-
-            n_best_preds = [" ".join(pred)
-                            for pred in trans.pred_sents[:opt.n_best]]
-            out_file.write('\n'.join(n_best_preds))
-            out_file.write('\n')
-            out_file.flush()
-
-            if opt.verbose:
-                sent_number = next(counter)
-                output = trans.log(sent_number)
-                os.write(1, output.encode('utf-8'))
-
-    _report_score('PRED', pred_score_total, pred_words_total)
-    if opt.tgt:
-        _report_score('GOLD', gold_score_total, gold_words_total)
-        if opt.report_bleu:
-            _report_bleu()
-        if opt.report_rouge:
-            _report_rouge()
-
-    if opt.dump_beam:
-        import json
-        json.dump(translator.beam_accum,
-                  codecs.open(opt.dump_beam, 'w', 'utf-8'))
-
+            print(" ".join(trans.pred_sents[0]))
 
 if __name__ == "__main__":
     main()
