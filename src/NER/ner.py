@@ -18,22 +18,14 @@ def lemmatize(s):
         m = Mystem()
         return lemmatize(s)
 
-#for line in sys.stdin:
-#    matches = dates_extractor(line)
-#    facts = []
-#    for match in matches:
-#        facts.append(match.fact)
-#    print(facts)
-
-
 def extract_users(text):
-    return re.findall('(@\w+)', text)
+    return re.findall('(@\w+)', text.lower())
 
 
 count_names = 'один|два|три|четыре|пять|шесть|семь|восемь|девять|десять'.split('|')
 
 def extract_date(orig_text):
-    text = lemmatize(orig_text)
+    text = lemmatize(orig_text.lower())
     digit_matches = re.search('(\\d+) (день|неделя|месяц|год)', text)
     word_matches = re.search('(один|два|три|четыре|пять|шесть|семь|восемь|девять|десять) (день|неделя|месяц|год)', text)
 
@@ -74,8 +66,10 @@ def extract_date(orig_text):
     elif 'месяц' in text:
         return datetime.now() + timedelta(days=30)
     else:
-        return extract_full_date(orig_text)
+        return extract_full_date(orig_text.lower())
 
+def is_email(text):
+    return len(re.findall('^\w+[.|\w]\w+@\w+[.]\w+[.|\w+]\w+$', text.lower())) > 0
 
 if __name__ == '__main__':
     tests = '''сделай к 4 февраля
