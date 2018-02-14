@@ -34,7 +34,9 @@ def write_task(token, list_id, summary, text, assignees, due_date, chat_id):
 
     #print(response, file=sys.stderr)
     url = response['newCard']['shortUrl']
-    text = 'Задача: ' + url + '\nСтатистика:'
+    text = 'Задача: ' + url
+    if len(response['memberCardAmounts']) > 0:
+        text = text + '\nСтатистика:'
     for mc in response['memberCardAmounts']:
         text = text + '\n' + mc['email'] + ': ' + mc['cardsAmmount']
 
