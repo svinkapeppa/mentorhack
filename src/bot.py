@@ -16,6 +16,11 @@ CHAT2LISTS = {}
 CHAT2TOKENS = {}
 TELEGRAM2TRELLO = {}
 
+telegram_gate = csv.writer(sys.stdout, quoting=csv.QUOTE_NONNUMERIC)
+def write_to_telegram(arr):
+    telegram_gate.writerow(arr)
+    sys.stdout.flush()
+
 def write_task(token, list_id, summary, text, assignees, due_date, chat_id):
     if due_date is None:
         due_date = ""
@@ -24,13 +29,12 @@ def write_task(token, list_id, summary, text, assignees, due_date, chat_id):
 
     payload = [token, list_id, summary, text, ','.join(assignees), due_date]
 
-    #print(payload, file=sys.stderr)
-
     to_exec = "echo '" + json.dumps(payload) + "' | " + os.getcwd() + "/totrello/index.js"
     response = json.loads(os.popen(to_exec).read())
 
-    # TODO: use id
-    id = response['id']
+    print(response, file=sys.stderr)
+    url = response['newCard']['shortUrl']
+    write_to_telegram([chat_id, url, '', '', '', ''])
 
     error = response['error']
 
@@ -62,11 +66,6 @@ def gen_summary(text):
 
 def format_body(text):
     return text
-
-telegram_gate = csv.writer(sys.stdout, quoting=csv.QUOTE_NONNUMERIC)
-def write_to_telegram(arr):
-    telegram_gate.writerow(arr)
-    sys.stdout.flush()
 
 def main():
     for row in csv.reader(iter(sys.stdin.readline, '')):
