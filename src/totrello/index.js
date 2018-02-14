@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 const request = require('request');
-const parse = require('csv-parse/lib/sync');
 const stdin = process.openStdin();
 
 stdin.on('data', input => {
   input = String(input).replace('\n', '');
   // console.log({input});
-  
-  const [ token, idList, name, desc, idMembers, due ] = parse(input)[0];
+
+  const [ token, idList, name, desc, idMembers, due ] = JSON.parse(input);
   
   const options = {
     method: 'POST',
