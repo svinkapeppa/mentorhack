@@ -14,8 +14,12 @@ CHAT2TOKENS = {}
 TELEGRAM2TRELLO = {}
 
 def write_task(token, list_id, summary, text, assignees, due_date):
+    if due_date is None:
+        due_date = ""
+    else:
+        due_date = due_date.date().isoformat()
     #TODO subprocess
-    print([token, list_id, summary, text, ','.join(assignees), due_date.date().isoformat()], file=sys.stderr)
+    print([token, list_id, summary, text, ','.join(assignees), due_date], file=sys.stderr)
 
 def chat_id2list_id(chat_id):
     if chat_id in CHAT2LISTS:
@@ -54,10 +58,12 @@ def main():
             CHAT2TOKENS[chat_id] = question.split(' ')[0]
             CHAT2LISTS[chat_id] = question.split(' ')[1]
             telegram_gate.writerow([chat_id, trello_list_added_text, '', '','',''])
+            sys.stdout.flush()
             continue
 
         if list_id is None or token is None:
             telegram_gate.writerow([chat_id, trello_list_needed_text.strip(), '', '','',''])
+            sys.stdout.flush()
             continue
             
         if not is_task(question):

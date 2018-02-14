@@ -5,7 +5,7 @@ from natasha.extractors import Extractor
 from pymystem3 import Mystem
 from datetime import datetime, timedelta
 
-from yargy_ner import extract_full_date
+from NER.yargy_ner import extract_full_date
 
 m = Mystem()
 
