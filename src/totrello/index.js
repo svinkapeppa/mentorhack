@@ -29,7 +29,9 @@ stdin.on('data', input => {
       })
       .catch(err => {
         // console.log({ err });
-        out.error = err.message;
+        if (err.response.status !== 404) {
+          out.error = err.message;
+        }
       });
 
   const userIdRequests = idMembers
@@ -56,8 +58,9 @@ stdin.on('data', input => {
           });
         })
         .catch(err => {
-          // console.log({ err });
-          out.error = err.message;
+          if (err.response.status !== 404) {
+            out.error = err.message;
+          }
         });
 
     const options = {
