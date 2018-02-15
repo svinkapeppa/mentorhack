@@ -2,6 +2,7 @@ import re
 from pymystem3 import Mystem
 from datetime import datetime, timedelta
 
+# from yargy_ner import extract_full_date
 from NER.yargy_ner import extract_full_date
 
 m = Mystem()
@@ -113,6 +114,22 @@ def is_imperative(s):
                         return True
     return False
 
+_asap_lemmatized_phrases = [lemmatize(phrase) for phrase in '''как можно скорее
+сделай быстро
+очень важно
+очень важная задача
+срочная задача
+срочная проблема'''.split('\n')]
+_asap_words = set('срочно важно асап asap'.split())
+
+def is_asap(text):
+    lem_text = lemmatize(text.lower())
+    for phrase in _asap_lemmatized_phrases:
+        if phrase in lem_text:
+            return True
+    words = set(lem_text.split())
+    return len(words.intersection(_asap_words)) > 0
+
 
 if __name__ == '__main__':
     tests = '''сделай к 4 февраля
@@ -135,3 +152,10 @@ if __name__ == '__main__':
     print(is_imperative('сообщи когда будут проблемы @tsundokum'))
     print(is_imperative('сообщишь когда будут проблемы @tsundokum'))
 
+    assert is_email('alexander.vorontsov.msk@gmail.com')
+
+    print()
+    print('ASAP  tests:')
+    print(is_asap('сделай срочно'))
+    print(is_asap('ставлю срочную задачу'))
+    print(is_asap('очередной срок'))
