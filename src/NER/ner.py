@@ -39,6 +39,8 @@ weekdays = {'понедельник':0,'пн':0,
             'суббота':5,'сб':5,
             'воскресенье':6,'вс':6}
 
+weekdays_set = set('понедельник|пн|вторник|вт|среда|ср|четверг|чт|пятница|пт|суббота|сб|воскресенье|вс'.split('|'))
+
 
 def next_weekday(d, weekday):
     days_ahead = weekday - d.weekday()
@@ -53,11 +55,10 @@ def extract_date(orig_text):
     word_matches = re.search('(один|два|три|четыре|пять|шесть|семь|восемь|девять|десять) (день|неделя|месяц|год)', text)
     next_matches = re.search('следующий (понедельник|пн|вторник|вт|среда|ср|четверг|чт|пятница|пт|суббота|сб|воскресенье|вс)', text)
 
-    if 'завтра' in text:
-        return datetime.now() + timedelta(days=1)
-    elif 'послезавтра' in text:
+    if 'послезавтра' in text:
         return datetime.now() + timedelta(days=2)
-
+    elif 'завтра' in text:
+        return datetime.now() + timedelta(days=1)
     elif word_matches or digit_matches:
         # даю тебе четыре дня на реализацию
         # код должен работать через два месяца начиная с сейчас
@@ -84,6 +85,10 @@ def extract_date(orig_text):
     elif next_matches:
         weekday_name = next_matches.group(1)
         return next_weekday(datetime.now(), weekdays[weekday_name])
+    elif set(text.split()).intersection(weekdays_set):
+        # take longer weekdays -- the longer more reliable =)
+        w = max(set(text.split()).intersection(weekdays_set), key=lambda x: len(x))
+        return next_weekday(datetime.now(), weekdays[w])
 
     # срок тебе неделя
     elif 'день' in text:
@@ -116,6 +121,9 @@ if __name__ == '__main__':
 срок тебе неделя
 сделай к следующему четвергу
 к следующему пн
+сделай ко вт
+завтра будет готово
+надо чтобы было послезавтра
 тут нет даты'''
     print('now', datetime.now())
     for line in tests.splitlines():
