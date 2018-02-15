@@ -72,7 +72,7 @@ def gen_summary(text):
     return summorize(text)
 
 def format_body(text):
-    return text
+    return text.replace(KAZEMIR_MENTION, '')
 
 def process_message(chat_id, from_, from_mention, question):
     from_mention = '@' + from_mention
