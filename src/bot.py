@@ -34,13 +34,11 @@ def write_task(token, list_id, summary, text, assignees, due_date, chat_id):
     to_exec = "echo '" + json.dumps(payload) + "' | " + os.getcwd() + "/totrello/index.js"
     response = json.loads(os.popen(to_exec).read())
 
-    #print(response, file=sys.stderr)
     url = response['newCard']['shortUrl']
     text = 'Задача: ' + url
     if len(response['memberCardAmounts']) > 0:
         text = text + '\nЗадач:'
     for mc in response['memberCardAmounts']:
-        #print(mc, file=sys.stderr)
         text = text + '\n' + mc['email'] + ': ' + str(mc['cardsAmount'])
 
     write_to_telegram([chat_id, text, '', '', '', ''])
@@ -85,13 +83,18 @@ def process_message(chat_id, from_, from_mention, question):
 
     list_id = chat_id2list_id(chat_id)
     token = chat_id2token(chat_id)
-    
+
+    if question.strip() == '/reset':
+        CHAT2TOKENS = {}
+        CHAT2LISTS = {}
+        TELEGRAM2TRELLO = {}
+
+    #print(question, file=sys.stderr)
     if (from_mention not in TELEGRAM2TRELLO) and is_email(question.replace(KAZEMIR_MENTION, '').strip()):
         TELEGRAM2TRELLO[from_mention] = question.replace(KAZEMIR_MENTION, '').strip()
         write_to_telegram([chat_id, snx, '', '','',''])
         return 
 
-    #print(question, file=sys.stderr)
     if (list_id is None or token is None) and is_trello_token(question):
         CHAT2TOKENS[chat_id] = question.split(' ')[0]
         CHAT2LISTS[chat_id] = question.split(' ')[1]
