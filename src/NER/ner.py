@@ -69,7 +69,7 @@ def extract_date(orig_text):
         return extract_full_date(orig_text.lower())
 
 def is_email(text):
-    return len(re.findall('^\w+[.|\w]\w+@\w+[.]\w+[.|\w+]\w+$', text.lower())) > 0
+    return len(re.findall('^\w+[.|\w][\w|\d]+@\w+[.]\w+[.|\w]+$', text.lower())) > 0
 
 if __name__ == '__main__':
     tests = '''сделай к 4 февраля

@@ -36,9 +36,10 @@ def write_task(token, list_id, summary, text, assignees, due_date, chat_id):
     url = response['newCard']['shortUrl']
     text = 'Задача: ' + url
     if len(response['memberCardAmounts']) > 0:
-        text = text + '\nСтатистика:'
+        text = text + '\nЗадач:'
     for mc in response['memberCardAmounts']:
-        text = text + '\n' + mc['email'] + ': ' + mc['cardsAmmount']
+        #print(mc, file=sys.stderr)
+        text = text + '\n' + mc['email'] + ': ' + str(mc['cardsAmount'])
 
     write_to_telegram([chat_id, text, '', '', '', ''])
 
@@ -77,17 +78,19 @@ def process_message(chat_id, from_, from_mention, question):
     list_id = chat_id2list_id(chat_id)
     token = chat_id2token(chat_id)
     
-    if from_mention not in TELEGRAM2TRELLO and is_email(questioan.replace(KAZEMIR_MENTION + ' ', '')):
-        TELEGRAM2TRELLO[from_mention] = question
+    if (from_mention not in TELEGRAM2TRELLO) and is_email(question.replace(KAZEMIR_MENTION, '').strip()):
+        TELEGRAM2TRELLO[from_mention] = question.replace(KAZEMIR_MENTION, '').strip()
         write_to_telegram([chat_id, snx, '', '','',''])
+        return 
 
+    #print(question, file=sys.stderr)
     if (list_id is None or token is None) and is_trello_token(question):
         CHAT2TOKENS[chat_id] = question.split(' ')[0]
         CHAT2LISTS[chat_id] = question.split(' ')[1]
         write_to_telegram([chat_id, trello_list_added_text, '', '','',''])
         return
 
-    if list_id is None or token is None:
+    if list_id is None or token is None and from_ != chat_id:
         write_to_telegram([chat_id, trello_list_needed_text, '', '','',''])
         return
         
