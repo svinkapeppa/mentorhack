@@ -127,7 +127,10 @@ def process_message(chat_id, from_, from_mention, question):
         
     due_date = extract_date(question)
 
-    write_task(token, list_id, summary, text, assignees, due_date, chat_id)
+    try:
+        write_task(token, list_id, summary, text, assignees, due_date, chat_id)
+    except Exception as e:
+        print(e, file=sys.stderr)
 
 def main():
     for row in csv.reader(iter(sys.stdin.readline, '')):
