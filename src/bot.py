@@ -29,7 +29,7 @@ def write_task(token, list_id, summary, text, assignees, due_date, chat_id):
     else:
         due_date = due_date.date().isoformat()
 
-    payload = [token, list_id, summary, text, ','.join(assignees.lower()), due_date]
+    payload = [token, list_id, summary, text, ','.join([x.strip() for x in assignees if len(x.strip()) > 0]).lower(), due_date]
 
     to_exec = "echo '" + json.dumps(payload) + "' | " + os.getcwd() + "/totrello/index.js"
     response = json.loads(os.popen(to_exec).read())
