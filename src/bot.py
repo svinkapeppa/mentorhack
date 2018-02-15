@@ -103,11 +103,17 @@ def process_message(chat_id, from_, from_mention, question):
         write_to_telegram([chat_id, trello_list_added_text.format(invite_link), '', '','',''])
         return
 
-    if list_id is None or token is None and from_ != chat_id:
-        write_to_telegram([chat_id, trello_list_needed_text, '', '','',''])
+    if from_ = chat_id:
+        return
+
+    if list_id is None or token is None:
+        write_to_telegram([chat_id, trello_list_needed_text, '', 'aa180ada07ce073697b4402e3cd0765e1a905675173af35d08474445000de1a6 5a854bc62886329b30215906','',''])
         return
         
-    strut_rule = len(re.findall('@\w+', question)) > 0 and is_imperative(question)
+    contains_mention = len(re.findall('@\w+', question)) > 0 
+    if not contains_mention:
+        return
+    strut_rule = contains_mention and is_imperative(question)
     if (not is_task(question) and not strut_rule) and KAZEMIR_MENTION not in question:
         return
 

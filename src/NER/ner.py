@@ -101,7 +101,7 @@ def extract_date(orig_text):
         return extract_full_date(orig_text.lower())
 
 def is_email(text):
-    return len(re.findall('^\\w+[.|\\w|\\d]+@\\w+\\w+[.|\\w|\\d]+$', text.lower().strip())) > 0
+    return len(re.findall('^\\w+[.|\\w|\\d]+@\\w+[.|\\w|\\d]+$', text.lower().strip())) > 0
 
 
 def is_imperative(s):
