@@ -67,7 +67,7 @@ def users2assignees(users):
     return res
 
 def gen_summary(text):
-    return summorize(text)
+    return summorize(text.replace(KAZEMIR_MENTION, '').strip())
 
 def format_body(text):
     return text

@@ -57,5 +57,5 @@ def summorize(req):
 
 if __name__ == "__main__":
     for req in sys.stdin:
-        raw = ' '.raw(set(summorize(req).split(' ')))
+        raw = summorize(req)
         print(raw)
