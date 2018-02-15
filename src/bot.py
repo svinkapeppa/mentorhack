@@ -103,7 +103,7 @@ def process_message(chat_id, from_, from_mention, question):
         write_to_telegram([chat_id, trello_list_added_text.format(invite_link), '', '','',''])
         return
 
-    if from_ = chat_id:
+    if from_ == chat_id:
         return
 
     if list_id is None or token is None:
