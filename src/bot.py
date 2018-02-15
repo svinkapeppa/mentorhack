@@ -84,10 +84,11 @@ def process_message(chat_id, from_, from_mention, question):
     list_id = chat_id2list_id(chat_id)
     token = chat_id2token(chat_id)
 
-    if question.strip() == '/reset':
-        CHAT2TOKENS = {}
-        CHAT2LISTS = {}
-        TELEGRAM2TRELLO = {}
+    if question.replace(KAZEMIR_MENTION, '').strip() == '/reset':
+        TELEGRAM2TRELLO.clear()
+        CHAT2TOKENS.clear()
+        CHAT2LISTS.clear()
+        return
 
     #print(question, file=sys.stderr)
     if (from_mention not in TELEGRAM2TRELLO) and is_email(question.replace(KAZEMIR_MENTION, '').strip()):
