@@ -15,6 +15,16 @@ def lemmatize(s):
         m = Mystem()
         return lemmatize(s)
 
+
+def mystem_analyze(str):
+    global m
+    try:
+        return m.analyze(str)
+    except BrokenPipeError as ex:
+        m = Mystem()
+        return mystem_analyze(str)
+
+
 def extract_users(text):
     return re.findall('(@\w+)', text.lower())
 
@@ -88,6 +98,17 @@ def extract_date(orig_text):
 def is_email(text):
     return len(re.findall('^\w+[.|\w][\w|\d]+@\w+[.]\w+[.|\w]+$', text.lower())) > 0
 
+
+def is_imperative(s):
+    for g in mystem_analyze(s):
+        if 'analysis' in g:
+            if len(g['analysis']) > 0:
+                for gr in g['analysis']:
+                    if 'пов' in gr['gr']:
+                        return True
+    return False
+
+
 if __name__ == '__main__':
     tests = '''сделай к 4 февраля
 даю тебе 4 дня на реализацию
@@ -103,3 +124,6 @@ if __name__ == '__main__':
         print()
 
     print(extract_users('сообщи когда будут проблемы @tsundokum'))
+    print(is_imperative('сообщи когда будут проблемы @tsundokum'))
+    print(is_imperative('сообщишь когда будут проблемы @tsundokum'))
+
