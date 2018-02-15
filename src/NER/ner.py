@@ -2,8 +2,8 @@ import re
 from pymystem3 import Mystem
 from datetime import datetime, timedelta
 
-# from yargy_ner import extract_full_date
-from NER.yargy_ner import extract_full_date
+from yargy_ner import extract_full_date
+# from NER.yargy_ner import extract_full_date
 
 m = Mystem()
 
@@ -99,7 +99,12 @@ def extract_date(orig_text):
     elif 'месяц' in text:
         return datetime.now() + timedelta(days=30)
     else:
-        return extract_full_date(orig_text.lower())
+        full_date = extract_full_date(orig_text.lower())
+        if full_date:
+            return full_date
+        else:
+            if is_asap(orig_text):
+                return datetime.now() + timedelta(hours=3)
 
 def is_email(text):
     return len(re.findall('^\\w+[.|\\w|\\d]+@\\w+[.|\\w|\\d]+$', text.lower().strip())) > 0
@@ -116,8 +121,6 @@ def is_imperative(s):
 
 _asap_lemmatized_phrases = [lemmatize(phrase) for phrase in '''как можно скорее
 сделай быстро
-очень важно
-очень важная задача
 срочная задача
 срочная проблема'''.split('\n')]
 _asap_words = set('срочно важно асап asap'.split())
@@ -141,7 +144,8 @@ if __name__ == '__main__':
 сделай ко вт
 завтра будет готово
 надо чтобы было послезавтра
-тут нет даты'''
+тут нет даты
+эту задачу нужно сделать срочно'''
     print('now', datetime.now())
     for line in tests.splitlines():
         print(line)
