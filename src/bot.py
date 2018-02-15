@@ -107,7 +107,7 @@ def process_message(chat_id, from_, from_mention, question):
         return
 
     if list_id is None or token is None:
-        write_to_telegram([chat_id, trello_list_needed_text, '', 'aa180ada07ce073697b4402e3cd0765e1a905675173af35d08474445000de1a6 5a854bc62886329b30215906','',''])
+        write_to_telegram([chat_id, trello_list_needed_text, '', 'd913ad0ce1614ffc56e34894b6ba56129b7adac621569d8304ec24b26264a258 5a854bc62886329b30215906','',''])
         return
         
     contains_mention = len(re.findall('@\w+', question)) > 0 

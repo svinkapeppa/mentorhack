@@ -27,7 +27,7 @@ def mystem_analyze(str):
 
 
 def extract_users(text):
-    return re.findall('(@\w+)', text.lower())
+    return re.findall('(@[\w|\d]+)', text.lower())
 
 
 count_names = 'один|два|три|четыре|пять|шесть|семь|восемь|девять|десять'.split('|')
