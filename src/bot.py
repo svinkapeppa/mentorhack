@@ -5,11 +5,12 @@ import sys
 import os
 import json
 import re
+import requests
 sys.path.insert(0, "summary/opennmt")
 from datetime import datetime
 from ir import is_task, is_trello_token
 from summary import summorize
-from NER.ner import extract_users, extract_date, is_email
+from NER.ner import extract_users, extract_date, is_email, is_imperative
 from texts import trello_list_needed_text, trello_list_added_text, user_email_needed, snx
 
 KAZEMIR_MENTION = "@mentor_assist_bot"
@@ -74,6 +75,11 @@ def gen_summary(text):
 def format_body(text):
     return text.replace(KAZEMIR_MENTION, '')
 
+def generate_invite_link(list_id):
+    url = "https://api.trello.com/1/lists/" + list_id
+    response = requests.request("GET", url)
+    return 'https://trello.com/b/' + response.json()['idBoard'] + '/'
+
 def process_message(chat_id, from_, from_mention, question):
     from_mention = '@' + from_mention
 
@@ -89,14 +95,16 @@ def process_message(chat_id, from_, from_mention, question):
     if (list_id is None or token is None) and is_trello_token(question):
         CHAT2TOKENS[chat_id] = question.split(' ')[0]
         CHAT2LISTS[chat_id] = question.split(' ')[1]
-        write_to_telegram([chat_id, trello_list_added_text, '', '','',''])
+        invite_link = generate_invite_link(question.split(' ')[1])
+        write_to_telegram([chat_id, trello_list_added_text.format(invite_link), '', '','',''])
         return
 
     if list_id is None or token is None and from_ != chat_id:
         write_to_telegram([chat_id, trello_list_needed_text, '', '','',''])
         return
         
-    if not is_task(question) and KAZEMIR_MENTION not in question:
+    strut_rule = len(re.findall('@\w+', question)) > 0 and is_imperative(question)
+    if (not is_task(question) and not strut_rule) and KAZEMIR_MENTION not in question:
         return
 
     summary = gen_summary(question)
