@@ -4,6 +4,7 @@ import csv
 import sys
 import os
 import json
+import re
 sys.path.insert(0, "summary/opennmt")
 from datetime import datetime
 from ir import is_task, is_trello_token
@@ -67,7 +68,8 @@ def users2assignees(users):
     return res
 
 def gen_summary(text):
-    return summorize(text.replace(KAZEMIR_MENTION, '').strip())
+    text = re.sub(r"@[\w|\d]+", "", text).strip()
+    return summorize(text)
 
 def format_body(text):
     return text
