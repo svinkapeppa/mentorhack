@@ -104,6 +104,7 @@ def process_message(chat_id, from_, from_mention, question):
         return
 
     if from_ == chat_id:
+        write_to_telegram([chat_id, 'Добавьте меня в групповой чат', '', '','',''])
         return
 
     if list_id is None or token is None:
