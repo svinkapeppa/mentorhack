@@ -18,6 +18,12 @@ CHAT2LISTS = {}
 CHAT2TOKENS = {}
 TELEGRAM2TRELLO = {}
 
+if !('LIST_ID' in os.environ) or !('TOKEN' in os.environ)
+  raise 'Provide LIST_ID and TOKEN env vars'
+
+list_id = os.environ['LIST_ID']
+token = os.environ['TOKEN']
+
 telegram_gate = csv.writer(sys.stdout, quoting=csv.QUOTE_NONNUMERIC)
 def write_to_telegram(arr):
     telegram_gate.writerow(arr)
@@ -81,8 +87,8 @@ def generate_invite_link(list_id):
 def process_message(chat_id, from_, from_mention, question):
     from_mention = '@' + from_mention
 
-    list_id = chat_id2list_id(chat_id)
-    token = chat_id2token(chat_id)
+    #list_id = chat_id2list_id(chat_id)
+    #token = chat_id2token(chat_id)
 
     if question.replace(KAZEMIR_MENTION, '').strip() == '/reset':
         TELEGRAM2TRELLO.clear()
