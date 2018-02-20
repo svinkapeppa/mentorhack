@@ -13,7 +13,7 @@
 
 ## как пользоваться нашим ботом
 
-[bot url](http://t.me/mentor_assist_bot)
+[bot url](http://t.me/t.me/manager_assist_bot)
 
 - выставить всем в профиле Telegram **имя пользователя**
 - добавить бота в чат
