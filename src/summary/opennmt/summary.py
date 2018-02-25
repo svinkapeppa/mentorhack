@@ -17,6 +17,8 @@ import onmt.ModelConstructor
 import onmt.modules
 import sys
 
+from onmt.io.IO import build_dataset_request
+
 m = Mystem()
 m.start()
 
@@ -46,7 +48,7 @@ translator = onmt.translate.Translator(model, fields,
 
 def summorize(req):
     try:
-        data = onmt.io.build_dataset(fields, opt.data_type, req, opt.tgt, src_dir=opt.src_dir, sample_rate=opt.sample_rate, window_size=opt.window_size, window_stride=opt.window_stride, window=opt.window, use_filter_pred=False)
+        data = build_dataset_request(fields, opt.data_type, req, opt.tgt, src_dir=opt.src_dir, sample_rate=opt.sample_rate, window_size=opt.window_size, window_stride=opt.window_stride, window=opt.window, use_filter_pred=False)
         data_iter = onmt.io.OrderedIterator(dataset=data, device=opt.gpu, batch_size=opt.batch_size, train=False, sort=False, sort_within_batch=True, shuffle=False) 
         builder = onmt.translate.TranslationBuilder(data, translator.fields, opt.n_best, opt.replace_unk, opt.tgt)
         for batch in data_iter:
@@ -62,7 +64,8 @@ def summorize(req):
                     return req
             best_pred = " ".join(predictions)
             return best_pred
-    except:
+    except Exception as ex:
+        print(ex)
         return req
 
 if __name__ == "__main__":
