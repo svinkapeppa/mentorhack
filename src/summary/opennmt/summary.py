@@ -64,8 +64,7 @@ def summorize(req):
                     return req
             best_pred = " ".join(predictions)
             return best_pred
-    except Exception as ex:
-        print(ex)
+    except:
         return req
 
 if __name__ == "__main__":
