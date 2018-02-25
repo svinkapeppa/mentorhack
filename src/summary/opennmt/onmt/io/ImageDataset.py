@@ -88,6 +88,21 @@ class ImageDataset(ONMTDatasetBase):
         return (examples_iter, num_feats)
 
     @staticmethod
+    def _make_image_examples_nfeats_tpl(req, img_dir):
+        """
+        ATTENTION:
+            NOT IMPLEMENTED
+        Args:
+            req (str): request (1 line).
+            img_dir (str): location of source images
+
+        Returns:
+            (example_dict iterator, num_feats) tuple
+        """
+
+        return None, 0
+
+    @staticmethod
     def read_img_file(path, src_dir, side, truncate=None):
         """
         Args:

@@ -169,7 +169,7 @@ def collect_feature_vocabs(fields, side):
     return feature_vocabs
 
 
-def build_dataset(fields, data_type, src_path, tgt_path, src_dir=None,
+def build_dataset(fields, data_type, req, tgt_path, src_dir=None,
                   src_seq_length=0, tgt_seq_length=0,
                   src_seq_length_trunc=0, tgt_seq_length_trunc=0,
                   dynamic_dict=True, sample_rate=0,
@@ -179,7 +179,7 @@ def build_dataset(fields, data_type, src_path, tgt_path, src_dir=None,
     # Build src/tgt examples iterator from corpus files, also extract
     # number of features.
     src_examples_iter, num_src_feats = \
-        _make_examples_nfeats_tpl(data_type, src_path, src_dir,
+        _make_examples_nfeats_tpl(data_type, req, src_dir,
                                   src_seq_length_trunc, sample_rate,
                                   window_size, window_stride,
                                   window, normalize_audio)
@@ -296,7 +296,7 @@ def build_vocab(train_dataset_files, fields, data_type, share_vocab,
     return fields
 
 
-def _make_examples_nfeats_tpl(data_type, src_path, src_dir,
+def _make_examples_nfeats_tpl(data_type, req, src_dir,
                               src_seq_length_trunc, sample_rate,
                               window_size, window_stride,
                               window, normalize_audio):
@@ -307,18 +307,18 @@ def _make_examples_nfeats_tpl(data_type, src_path, src_dir,
 
     if data_type == 'text':
         src_examples_iter, num_src_feats = \
-            TextDataset.make_text_examples_nfeats_tpl(
-                src_path, src_seq_length_trunc, "src")
+            TextDataset._make_text_examples_nfeats_tpl(
+                req, src_seq_length_trunc)
 
     elif data_type == 'img':
         src_examples_iter, num_src_feats = \
-            ImageDataset.make_image_examples_nfeats_tpl(
-                src_path, src_dir)
+            ImageDataset._make_image_examples_nfeats_tpl(
+                req, src_dir)
 
     elif data_type == 'audio':
         src_examples_iter, num_src_feats = \
-            AudioDataset.make_audio_examples_nfeats_tpl(
-                src_path, src_dir, sample_rate,
+            AudioDataset._make_audio_examples_nfeats_tpl(
+                req, src_dir, sample_rate,
                 window_size, window_stride, window,
                 normalize_audio)
 

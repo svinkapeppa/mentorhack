@@ -147,6 +147,34 @@ class TextDataset(ONMTDatasetBase):
         return (examples_iter, num_feats)
 
     @staticmethod
+    def _make_text_examples_nfeats_tpl(req, truncate):
+        """
+        Args:
+            req (str): request (1 line).
+            truncate (int): maximum sequence length (0 for unlimited).
+
+        Returns:
+            (example_dict iterator, num_feats) tuple.
+        """
+
+        if req is None:
+            return (None, 0)
+
+        # All examples have same number of features, so we peek first one
+        # to get the num_feats.
+        examples_nfeats_iter = \
+            TextDataset._read_text(req, truncate)
+
+        first_ex = next(examples_nfeats_iter)
+        num_feats = first_ex[1]
+
+        # Chain back the first element - we only want to peek it.
+        examples_nfeats_iter = chain([first_ex], examples_nfeats_iter)
+        examples_iter = (ex for ex, nfeats in examples_nfeats_iter)
+
+        return examples_iter, num_feats
+
+    @staticmethod
     def read_text_file(path, truncate, side):
         """
         Args:
@@ -172,6 +200,30 @@ class TextDataset(ONMTDatasetBase):
                     example_dict.update((prefix + str(j), f)
                                         for j, f in enumerate(feats))
                 yield example_dict, n_feats
+
+    @staticmethod
+    def _read_text(req, truncate):
+        """
+        Args:
+            req (str): request (1 line).
+            truncate (int): maximum sequence length (0 for unlimited).
+
+        Yields:
+            (word, features, nfeat) triples for each line.
+        """
+        line = req.strip().split()
+        if truncate:
+            line = line[:truncate]
+
+        words, feats, n_feats = \
+            TextDataset.extract_text_features(line)
+
+        example_dict = {"src": words, "indices": 0}
+        if feats:
+            prefix = "src" + "_feat_"
+            example_dict.update((prefix + str(j), f)
+                                for j, f in enumerate(feats))
+        yield example_dict, n_feats
 
     @staticmethod
     def get_fields(n_src_features, n_tgt_features):

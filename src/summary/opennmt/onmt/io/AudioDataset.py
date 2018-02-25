@@ -115,6 +115,31 @@ class AudioDataset(ONMTDatasetBase):
         return (examples_iter, num_feats)
 
     @staticmethod
+    def _make_audio_examples_nfeats_tpl(req, audio_dir,
+                                        sample_rate, window_size,
+                                        window_stride, window,
+                                        normalize_audio, truncate=None):
+        """
+        ATTENTION:
+            NOT IMPLEMENTED
+        Args:
+            req (str): request (1 line).
+            audio_dir (str): location of source audio files.
+            sample_rate (int): sample_rate.
+            window_size (float) : window size for spectrogram in seconds.
+            window_stride (float): window stride for spectrogram in seconds.
+            window (str): window type for spectrogram generation.
+            normalize_audio (bool): subtract spectrogram by mean and divide
+                by std or not.
+            truncate (int): maximum audio length (0 or None for unlimited).
+
+        Returns:
+            (example_dict iterator, num_feats) tuple
+        """
+
+        return None, 0
+
+    @staticmethod
     def read_audio_file(path, src_dir, side, sample_rate, window_size,
                         window_stride, window, normalize_audio,
                         truncate=None):

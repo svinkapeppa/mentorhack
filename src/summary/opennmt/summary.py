@@ -46,10 +46,7 @@ translator = onmt.translate.Translator(model, fields,
 
 def summorize(req):
     try:
-        f = open('/tmp/mentorhack_data.tmp', 'w')
-        f.write(req)
-        f.close()
-        data = onmt.io.build_dataset(fields, opt.data_type, '/tmp/mentorhack_data.tmp', opt.tgt, src_dir=opt.src_dir, sample_rate=opt.sample_rate, window_size=opt.window_size, window_stride=opt.window_stride, window=opt.window, use_filter_pred=False) 
+        data = onmt.io.build_dataset(fields, opt.data_type, req, opt.tgt, src_dir=opt.src_dir, sample_rate=opt.sample_rate, window_size=opt.window_size, window_stride=opt.window_stride, window=opt.window, use_filter_pred=False)
         data_iter = onmt.io.OrderedIterator(dataset=data, device=opt.gpu, batch_size=opt.batch_size, train=False, sort=False, sort_within_batch=True, shuffle=False) 
         builder = onmt.translate.TranslationBuilder(data, translator.fields, opt.n_best, opt.replace_unk, opt.tgt)
         for batch in data_iter:
